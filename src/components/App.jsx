@@ -1,24 +1,32 @@
-import { useState, useEffect } from 'react';
-import { nanoid } from 'nanoid';
+// import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+// import { nanoid } from 'nanoid';
 import ContactForm from './ContactForm';
 import ContactList from './ContactList';
 import Filter from './Filter';
 import { Container, Title, TitleList } from './App.styled';
+import { getContacts, getFilterValue } from 'redux/selectors';
+import { addContact, deleteContact } from 'redux/contactsSlice';
+import { setFilter } from 'redux/filterSlice';
 
 const App = () => {
-  const [contacts, setContacts] = useState([]);
-  const [filter, setFilter] = useState('');
+  // const [contacts, setContacts] = useState([]);
+  // const [filter, setFilter] = useState('');
 
-  useEffect(() => {
-    const localData = JSON.parse(localStorage.getItem('contacts'));
-    if (localData && localData.length > 0) {
-      setContacts(localData);
-    }
-  }, []);
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilterValue);
 
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
+  // useEffect(() => {
+  //   const localData = JSON.parse(localStorage.getItem('contacts'));
+  //   if (localData && localData.length > 0) {
+  //     setContacts(localData);
+  //   }
+  // }, []);
+
+  // useEffect(() => {
+  //   localStorage.setItem('contacts', JSON.stringify(contacts));
+  // }, [contacts]);
 
   const createContact = dataFromForm => {
     const isContactExist = contacts.find(
@@ -27,19 +35,22 @@ const App = () => {
     if (isContactExist) {
       return alert(`${dataFromForm.name} is already in contacts.`);
     }
-    const newContact = {
-      ...dataFromForm,
-      id: nanoid(),
-    };
-    setContacts(prev => [...prev, newContact]);
+    // const newContact =
+    //   ...dataFromForm,
+    //   id: nanoid(),
+    // };
+    // setContacts(prev => [...prev, newContact]);
+    dispatch(addContact(dataFromForm));
   };
 
   const handleFilter = ({ target: { value } }) => {
-    setFilter(value);
+    // setFilter(value);
+    dispatch(setFilter(value));
   };
 
   const handleDelete = id => {
-    setContacts(prev => prev.filter(contact => contact.id !== id));
+    // setContacts(prev => prev.filter(contact => contact.id !== id));
+    dispatch(deleteContact(id));
   };
 
   const createContactsByfilter = () => {
